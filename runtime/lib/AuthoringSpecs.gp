@@ -34,7 +34,7 @@ method addSpecs AuthoringSpecs newSpecs {
   for entry newSpecs {
 	add specsList entry
 	if (isClass entry 'String') {
-	  category = entry
+	  if ('-' != entry) { category = entry }
 	} else {
 	  op = (at entry 2)
 	  specsForOp = (at specsByOp op (list))
@@ -135,7 +135,11 @@ method specsFor AuthoringSpecs category {
   currentCategory = ''
   for entry specsList {
 	if (isClass entry 'String') {
-	  currentCategory = entry
+	  if ('-' == entry) {
+		if (currentCategory == category) { add result '-' }
+	  } else {
+		currentCategory = entry
+	  }
 	} (currentCategory == category) {
 	  add result (specForEntry this entry)
 	}
@@ -244,6 +248,10 @@ method setLanguage AuthoringSpecs newLang {
 	translationData = (readFile (join 'translations/' newLang '.txt'))
   }
   if (isNil translationData) {
+	// if still nil, we may be in the wrong dir
+	translationData = (readFile (join '../translations/' newLang '.txt'))
+  }
+  if (isNil translationData) {
 	language = 'English'
 	translationDictionary = nil
   } else {
@@ -269,27 +277,58 @@ method needsTranslation AuthoringSpecs spec {
 
   if (isNil translationDictionary) { return false }
   for s (specs spec) {
-	if (contains translationDictionary s) { return true }
+	localization = (localizedOrNil s)
+	if (or (isNil localization) (localization == '--MISSING--')) {
+		return false
+	} else {
+		return true
+	}
   }
   return false
 }
 
-method installTranslation AuthoringSpecs translationData {
+method installTranslation AuthoringSpecs translationData langName {
   // Translations data is string consisting of three-line entries:
   //	original string
   //	translated string
   //	<blank line>
   //	...
+  // Lines starting with # are treated as comments
 
   translationDictionary = (dictionary)
   lines = (toList (lines translationData))
   while ((count lines) >= 2) {
 	from = (removeFirst lines)
-	to = (removeFirst lines)
-	atPut translationDictionary from to
-	while (and ((count lines) > 0) ((removeFirst lines) != '')) {
-	  // skip lines until the next blank line
+	// ignore comments and blank lines
+	while (and
+			((count lines) >= 2)
+			(or (beginsWith from '#') (from == ''))) {
+		from = (removeFirst lines)
 	}
+	if ((count lines) >= 1) {
+		to = (removeFirst lines)
+		atPut translationDictionary from to
+	}
+  }
+  if (notNil langName) { language = langName }
+}
+
+to localized aString {
+  localization = (localizedOrNil aString)
+  if (or (isNil localization) (localization == '--MISSING--')) {
+	return aString
+  } else {
+	return localization
+  }
+}
+
+to localizedOrNil aString {
+  if (isNil aString) { return nil }
+  dict = (getField (authoringSpecs) 'translationDictionary')
+  if (isNil dict) {
+	return aString
+  } else {
+	return (at dict aString)
   }
 }
 
@@ -301,6 +340,7 @@ method initialSpecs AuthoringSpecs {
 	  (array ' ' 'animate'				'forever _' 'cmd')
 	  (array ' ' 'if'					'if _ _ : else if _ _ : ...' 'bool cmd bool cmd')
 	  (array ' ' 'repeat'				'repeat _ _' 'num cmd' 10)
+	  (array ' ' 'uninterruptedly'      'uninterruptedly _' 'cmd')
 	  (array ' ' 'waitSecs'				'wait : _ seconds' 'num' 0.1)
 	  (array ' ' 'waitUntil'			'wait until _' 'bool')
 	  (array ' ' 'stopTask'				'stop')
@@ -474,8 +514,8 @@ Line 2')
 	  (array 'r' 'canonicalizedWord' 'canonicalize _ ' 'str' 'Hello GP!')
 
 	'Network'
-	  (array 'r' 'getData'			'get cloud data user _ key _' 'str str' 'gp' 'test')
-	  (array ' ' 'putData'			'put cloud data user _ key _ data _' 'str str str' 'gp' 'test' 'hello!')
+	  (array 'r' 'getData'			'get cloud data user _ key _' 'str str' 'ship' 'test')
+	  (array ' ' 'putData'			'put cloud data user _ key _ data _' 'str str str' 'ship' 'test' 'hello!')
 	  (array 'r' 'httpGet'			'http host _ : path _ : port _' 'str str num' 'tinlizzie.org' '/' '80')
 	  (array 'r' 'jsonStringify'	'json encode _' 'obj')
 	  (array 'r' 'jsonParse'		'json decode _' 'str')
@@ -522,6 +562,7 @@ Line 2')
 	  (array ' ' 'self_instantiate'		'add an instance of _' 'str.classNameMenu auto' 'MyClass' 0)
 	  (array 'r' 'self_instantiate'		'new instance of _' 'str.classNameMenu auto' 'MyClass' 0)
 	  (array ' ' 'self_delete'			'delete : _' 'obj')
+	  (array ' ' 'castIntoTheVoid'      'remove all references : to _' 'obj')
 	  (array 'r' 'self_owner'			'owner : of _' 'obj')
 	  (array 'r' 'self_stage'			'stage')
 	  (array 'r' 'self_parts'			'parts : of _' 'obj')
@@ -708,6 +749,7 @@ Line 2')
 	  (array ' ' 'gc'					'collect garbage')
 	  (array 'r' 'mem'					'memory usage')
 	  (array 'r' 'allInstances'			'all instances of _' 'str' 'String')
+	  (array 'r' 'easyBench'            'easyBench _ _' 'auto cmd' 10 nil)
 
 	'Developer'
 	  (array ' ' 'setBlockColors'		'set block colors _ _ _ _' 'color color color color')

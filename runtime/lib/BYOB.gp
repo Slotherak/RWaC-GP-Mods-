@@ -291,7 +291,7 @@ method exportAsImage BlockDefinition {
   blockM = (ownerThatIsA morph 'Block')
   if (notNil blockM) { blockM = (owner blockM) } // get the prototype hat block
   if (or (isNil blockM) (not (isPrototypeHat (handler blockM)))) { return }
-  fName = (uniqueNameNotIn (listFiles (gpFolder)) 'scriptImage' '.png')
+  fName = (uniqueNameNotIn (listFiles (gpModFolder)) 'scriptImage' '.png')
   fName = (fileToWrite fName '.png')
   if ('' == fName) { return }
   if (not (endsWith fName '.png')) { fName = (join fName '.png') }
@@ -647,7 +647,10 @@ method specString BlockSectionDefinition {
   for each (parts morph) {
     part = (handler each)
     if (isClass part 'Text') {
-      spec = (join spec delim (text part))
+	  // remove colons from label (colons are reserved for marking optional parameters in spec)
+	  label = (joinStrings (copyWithout (letters (text part)) ':'))
+	  if (label != (text part)) { setText part label }
+      spec = (join spec delim label)
       delim = ' '
     } (isClass part 'Block') { // input
       spec = (join spec delim '_')
