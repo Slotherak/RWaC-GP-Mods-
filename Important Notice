@@ -1,0 +1,36 @@
+It has been about uhhh four or five months since I began work on this project. I am unofficially closing the door on this project--
+
+for now.
+
+I will be pursuing a more familiar language instead for this project, which required the program I'm writing to communicate with Slic3r, a CNC machine of unknown 
+designation, and the internet itself with no problems. Considering the difficulties in DRAWING A LINE AS AN OBJECT, this language base is completely impossible to use and
+reach my designated deadline in four months.
+
+I may return to this at a later date, so if you were intent on a text-based CNC/Slic3r/RWaC client, and it being available in GP Blocks, then maybe I will resume this
+aggravating language. Perhaps I will still need this program for the final project.
+
+For now, I will be switching back to my primary coding language, JAVA. Specifically, Processing (formerly Proce55ing, and formerly formerly Processing^3).
+
+I will add my greatest achievement in this programming language to this repo, just for others to see the limits of this program.
+
+A file, called octahedron.txt, which if loaded via the load function in Azathoth's UI will summon a wireframe octahedron in the main window. The file format was annoying
+to code for, so some tips:
+
+1. No, that's not a typo, there is supposed to be a space between the final parameter and the semicolon. I blame the fact that we have string building blocks, but string-
+editing blocks that just remove a single character. 
+
+2. Points, then lines. The Wrong order WILL cause problems. 
+
+3. The lines saying points and lines can be shortened to "p:" and "l:" if you want, all it needs are the first letter, and the colon to tell it it's a category designator.
+
+4. Curly braces are optional, you can exclude them if you want. I just excluded those specific characters, so you will have to edit the code to make the program not crash
+when you put parentheses or brackets. Or whatever else you were wrapping the objects in.
+
+5. When saving a file, the extension is automatically added. ".txt". You don't have to specify the extension, it knows what kind is compatible. You're welcome.
+
+Functions implemented: Help (not actually as useful as I wanted it to be), Arguments (same as help), Outputs (also unsatisfactory), reDraw, newPoint, newLine, load, save.
+
+reDraw refreshes the ViewFinder and resets all Lines. It's required if you realize that you set up a line improperly, as GP BLOCKS DOES NOT SUPPORT LINE OBJECTIFICATION.
+If you mess up a line, all you need to do is put in the correct endpoint vertex ID names, and the SAME LINE ID NAME as the one you messed up. If you mess up the Points...
+You are on your own. My mantra for this was "At least it's not Malbolge. At least it's not Brainfuck. At least it's got some ease of use." After the trouble in making 
+a LINE, I'm not sure that Malbolge would have been worse. Goodbye, memory hog. I will not miss you in the slightest.
