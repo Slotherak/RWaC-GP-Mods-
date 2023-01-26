@@ -1,0 +1,24 @@
+points:
+{
+a 0 200 0 0 ;
+b 200 0 0 0 ;
+c 0 0 200 0 ;
+d -200 0 0 0 ;
+e 0 0 -200 0 ;
+f 0 -200 0 0 ;
+}
+lines:
+{
+ab a b ;
+ac a c ;
+ad a d ;
+ae a e ;
+bc b c ;
+cd c d ;
+de d e ;
+eb e b ;
+bf b f ;
+cf c f ;
+df d f ;
+ef e f ;
+}
